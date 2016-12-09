@@ -13,13 +13,13 @@ void Fontx::resetFontx(void)
   m_cFontx = 0;
 }
   
-void Fontx::addFontx(uint8_t *fontx)
+void Fontx::addFontx(const uint8_t *fontx)
 {
   if(m_cFontx < FontxFileMax && fontx)
     m_aFontx[m_cFontx++] = fontx;
 }
 
-void Fontx::setFontx(uint8_t *f0, uint8_t *f1, uint8_t *f2)
+void Fontx::setFontx(const uint8_t *f0,const uint8_t *f1,const uint8_t *f2)
 {
   resetFontx();
   addFontx(f0);

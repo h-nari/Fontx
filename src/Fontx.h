@@ -23,7 +23,7 @@ class Fontx {
   int8_t m_spaceY;
  protected:
   uint8_t  m_cFontx;
-  uint8_t *m_aFontx[FontxFileMax];
+  const uint8_t *m_aFontx[FontxFileMax];
   
  public:
   Fontx();
@@ -31,8 +31,8 @@ class Fontx {
 		 uint8_t *pw, uint8_t *ph);
   bool isValid() {return m_cFontx > 0;}
   void resetFontx(void);
-  void addFontx(uint8_t *fontx);
-  void setFontx(uint8_t *f0, uint8_t *f1=NULL, uint8_t *f2=NULL);
+  void addFontx(const uint8_t *fontx);
+  void setFontx(const uint8_t *f0,const uint8_t *f1=NULL,const uint8_t *f2=NULL);
 
  protected:
   void process_utf8_byte(uint8_t c, int16_t *pX, int16_t *pY, bool bDraw=true,
