@@ -1,25 +1,29 @@
 #include "Fontx.h"
 #include "uni2sjis.h"
 
-Fontx::Fontx()
+RomFontx::RomFontx()
 {
-  m_cFontx = 0;
-  m_spaceX = 1;
-  m_spaceY = 1;
+  resetFontx();
 }
 
-void Fontx::resetFontx(void)
+RomFontx::RomFontx(const uint8_t *f0, const uint8_t *f1, const uint8_t* f2)
+{
+  setFontx(f0,f1,f2);
+}
+
+
+void RomFontx::resetFontx(void)
 {
   m_cFontx = 0;
 }
   
-void Fontx::addFontx(const uint8_t *fontx)
+void RomFontx::addFontx(const uint8_t *fontx)
 {
   if(m_cFontx < FontxFileMax && fontx)
     m_aFontx[m_cFontx++] = fontx;
 }
 
-void Fontx::setFontx(const uint8_t *f0,const uint8_t *f1,const uint8_t *f2)
+void RomFontx::setFontx(const uint8_t *f0,const uint8_t *f1,const uint8_t *f2)
 {
   resetFontx();
   addFontx(f0);
@@ -27,8 +31,8 @@ void Fontx::setFontx(const uint8_t *f0,const uint8_t *f1,const uint8_t *f2)
   addFontx(f2);
 }
 
-bool Fontx::getGlyph(uint16_t code , const uint8_t **pGlyph,
-		     uint8_t *pw, uint8_t *ph)
+bool RomFontx::getGlyph(uint16_t code , const uint8_t **pGlyph,
+			uint8_t *pw, uint8_t *ph)
 {
   uint32_t sjis;
 

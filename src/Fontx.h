@@ -15,30 +15,29 @@
 				  ".balign 4\n"				\
 				  ".section \".text\"\n")
 #endif /* IMPORT_BIN */
+#ifndef FontxFileMax
 #define FontxFileMax	3
+#endif
 
 class Fontx {
  public:
-  int8_t m_spaceX;
-  int8_t m_spaceY;
+  virtual bool getGlyph (uint16_t code , const uint8_t **pGlyph,
+			 uint8_t *pw, uint8_t *ph) = 0;
+};
+
+class RomFontx : public Fontx {
  protected:
   uint8_t  m_cFontx;
   const uint8_t *m_aFontx[FontxFileMax];
   
  public:
-  Fontx();
+  RomFontx();
+  RomFontx(const uint8_t *f0,const uint8_t *f1=NULL,const uint8_t*f2=NULL);
   bool getGlyph (uint16_t code , const uint8_t **pGlyph,
-		 uint8_t *pw, uint8_t *ph);
-  bool isValid() {return m_cFontx > 0;}
+		 uint8_t *pw, uint8_t *ph) override;
   void resetFontx(void);
   void addFontx(const uint8_t *fontx);
-  void setFontx(const uint8_t *f0,const uint8_t *f1=NULL,const uint8_t *f2=NULL);
-
- protected:
-  void process_utf8_byte(uint8_t c, int16_t *pX, int16_t *pY, bool bDraw=true,
-			 int16_t *pX2=NULL);
-  bool getFont(uint16_t code, const uint8_t **pFont);
-  
+  void setFontx(const uint8_t *f0,const uint8_t *f1=NULL,const uint8_t*f2=NULL);
 };
 
 

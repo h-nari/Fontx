@@ -1,0 +1,120 @@
+#include <FS.h>
+#include "FsFontx.h"
+
+FsFontx::FsFontx(const char *f0,const char *f1,const char *f2) : Fontx()
+{
+  m_cFontx = 0;
+  addFont(f0);
+  addFont(f1);
+  addFont(f2);
+}
+
+void FsFontx::addFont(const char *path)
+{
+  if(m_cFontx < FontxFileMax && path){
+    m_aFontxFile[m_cFontx].path = path;
+    m_aFontxFile[m_cFontx].opened = false;
+    m_cFontx++;
+  }
+}
+
+bool FsFontx::openFontxFile(FontxFile *ff)
+{
+  if(!ff->opened){
+    ff->opened = true;
+    File f = SPIFFS.open(ff->path,"r");
+    if(!f){
+      ff->valid = false;
+      Serial.printf("FsFontx:%s not found.\n",ff->path);
+    } else {
+      ff->file = f;
+      char buf[18];
+
+      f.readBytes(buf, sizeof buf);
+      ff->w = buf[14];
+      ff->h = buf[15];
+      ff->is_ank = (buf[16] == 0);
+      ff->bc = buf[17];
+      ff->fsz = (ff->w + 7)/8 * ff->h;
+      if(ff->fsz > FontxGlyphBufSize){
+	Serial.println("too big font size.");
+	ff->valid = false;
+      } else {
+	ff->valid = true;
+      }
+    }
+  }
+  return ff->valid;
+}
+
+void FsFontx::closeFontxFile(FontxFile *ff)
+{
+  if(ff->opened){
+    ff->file.close();
+    ff->opened = false;
+  }
+}
+
+
+void FsFontx::closeFontxFile()
+{
+  for(int i=0; i<m_cFontx; i++)
+    closeFontxFile(&m_aFontxFile[i]);
+}
+
+bool FsFontx::getGlyph (uint16_t ucode , const uint8_t **pGlyph,
+			uint8_t *pw, uint8_t *ph)
+{
+  uint32_t sjis;
+
+  if(ucode >= 0x100 && !uni2sjis(ucode, &sjis))
+    return false;
+  
+  for(int i=0; i<m_cFontx; i++){
+    FontxFile *ff = &m_aFontxFile[i];
+    if(!openFontxFile(ff)) continue;
+    
+    if(ucode < 0x100){
+      if(ff->is_ank){
+	ff->file.seek(17 + ucode * ff->fsz, SeekSet);
+	ff->file.readBytes((char *)m_glyphBuf, ff->fsz);
+	if(pGlyph) *pGlyph = m_glyphBuf;
+	if(pw) *pw = ff->w;
+	if(ph) *ph = ff->h;
+	return true;
+      }
+    }
+    else {
+      if(!ff->file.seek(18, SeekSet)){
+	Serial.println("FsFontx::seek(18) failed.");
+	continue;
+      }
+      uint16_t buf[2], nc = 0, bc = ff->bc;
+    
+      while(bc--){ 
+	if(ff->file.readBytes((char *)buf, 4)!=4){
+	  Serial.println("FsFontx::readBytes failed.");
+	  continue;
+	}
+
+	if(sjis >= buf[0] && sjis <= buf[1]) {
+	  nc += sjis - buf[0];
+	  uint32_t pos = 18 + ff->bc * 4 + nc * ff->fsz;
+	  if(!ff->file.seek(pos, SeekSet)){
+	    Serial.printf("FsFontx::seek(%u) failed.\n",pos);
+	    break;
+	  }
+	  ff->file.readBytes((char *)m_glyphBuf, ff->fsz);
+	  if(pGlyph) *pGlyph = m_glyphBuf;
+	  if(pw) *pw = ff->w;
+	  if(ph) *ph = ff->h;
+	  return true;
+	}
+	nc += buf[1] - buf[0] + 1;
+      }
+    }
+  }
+  return false;
+}
+
+  
