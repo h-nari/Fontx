@@ -1,4 +1,3 @@
-#include <FS.h>
 #include <Fontx.h>
 #include <fontx/ILGH16XB.h>
 #include <fontx/ILGZ16XB.h>

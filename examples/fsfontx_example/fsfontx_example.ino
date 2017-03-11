@@ -1,12 +1,3 @@
-#include "conf.h"
-
-#if USE_OTA
-#include <WiFiUdp.h>
-#include <ArduinoOTA.h>
-#include "ota_util.h"
-#endif
-
-
 #include <FS.h>
 #include <Fontx.h>
 #include <FsFontx.h>
@@ -19,22 +10,6 @@ void setup()
   delay(100);
   Serial.println("\nReset:");
 
-#if USE_OTA
-	WiFi.mode(WIFI_STA);
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-	while(WiFi.status() != WL_CONNECTED) {
-		delay(500);
-		Serial.print('.');
-	}
-	Serial.println();
-	Serial.print("IP: ");
-	Serial.println(WiFi.localIP());
-
-  static int8_t ota_col;
-  ota_init();
-#endif
-	
-#if 1
 	if(!SPIFFS.begin())
 		Serial.println("SPIFFS failed.");
 	else {
@@ -47,7 +22,7 @@ void setup()
 		}
 		Serial.printf("%d files found.\n",cnt);
 	}
-#endif
+
 	const uint8_t *p;
 	uint8_t w,h;
 	uint16_t str[] = {u'漢',u'字',u'T',u'E',u'S',u'T'};
@@ -71,9 +46,6 @@ void setup()
 
 void loop()
 {
-#if USE_OTA
-  ArduinoOTA.handle();
-#endif
 }
     
 /*** Local variables: ***/

@@ -1,3 +1,5 @@
+#ifndef ESP32
+
 #include <FS.h>
 #include "FsFontx.h"
 
@@ -62,7 +64,7 @@ void FsFontx::closeFontxFile()
     closeFontxFile(&m_aFontxFile[i]);
 }
 
-bool FsFontx::getGlyph (uint16_t ucode , const uint8_t **pGlyph,
+bool FsFontx::getGlyph (uint32_t ucode , const uint8_t **pGlyph,
 			uint8_t *pw, uint8_t *ph)
 {
   uint32_t sjis;
@@ -117,4 +119,27 @@ bool FsFontx::getGlyph (uint16_t ucode , const uint8_t **pGlyph,
   return false;
 }
 
-  
+bool FsFontx::checkFontFile(bool verbose)
+{
+  for(int i=0; i<m_cFontx; i++){
+    if(!openFontxFile(&m_aFontxFile[i])){
+      if(verbose) dumpFileSystem();
+      return false;
+    }
+  }
+  return true;
+}
+
+void FsFontx::dumpFileSystem()
+{
+  Dir dir = SPIFFS.openDir("/");
+  int cnt = 0;
+  while(dir.next()){
+    File f = dir.openFile("r");
+    Serial.printf("[%d] %-12s %12u\n",++cnt,f.name(), f.size());
+    f.close();
+  }
+  Serial.printf("%d files found.\n",cnt);
+}
+
+#endif // not defined(ESP32)

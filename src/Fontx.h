@@ -21,7 +21,7 @@
 
 class Fontx {
  public:
-  virtual bool getGlyph (uint16_t code , const uint8_t **pGlyph,
+  virtual bool getGlyph (uint32_t code , const uint8_t **pGlyph,
 			 uint8_t *pw, uint8_t *ph) = 0;
 };
 
@@ -33,7 +33,7 @@ class RomFontx : public Fontx {
  public:
   RomFontx();
   RomFontx(const uint8_t *f0,const uint8_t *f1=NULL,const uint8_t*f2=NULL);
-  bool getGlyph (uint16_t code , const uint8_t **pGlyph,
+  bool getGlyph (uint32_t code , const uint8_t **pGlyph,
 		 uint8_t *pw, uint8_t *ph) override;
   void resetFontx(void);
   void addFontx(const uint8_t *fontx);

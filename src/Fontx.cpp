@@ -31,14 +31,16 @@ void RomFontx::setFontx(const uint8_t *f0,const uint8_t *f1,const uint8_t *f2)
   addFontx(f2);
 }
 
-bool RomFontx::getGlyph(uint16_t code , const uint8_t **pGlyph,
+bool RomFontx::getGlyph(uint32_t code , const uint8_t **pGlyph,
 			uint8_t *pw, uint8_t *ph)
 {
   uint32_t sjis;
 
-  if(code >= 0x100 && !uni2sjis(code, &sjis))
+  if(code < 0x80)
+    sjis = code;
+  else if( !uni2sjis(code, &sjis))
     return false;
-  
+
   for(int i=0; i<m_cFontx; i++){
     const uint8_t *font = m_aFontx[i];
     bool is_ank = pgm_read_byte(&font[16]) == 0;
@@ -47,9 +49,9 @@ bool RomFontx::getGlyph(uint16_t code , const uint8_t **pGlyph,
     uint8_t h = pgm_read_byte(&font[15]);
     uint32_t fsz = (w + 7) / 8 * h;
 
-    if(code < 0x100){
+    if(sjis < 0x100){
       if(is_ank){
-	if(pGlyph) *pGlyph = &font[17 + code * fsz];
+	if(pGlyph) *pGlyph = &font[17 + sjis * fsz];
 	if(pw) *pw = w;
 	if(ph) *ph = h;
 	return true;

@@ -29,8 +29,10 @@ class FsFontx : public Fontx {
  public:
   FsFontx(const char *f0,const char *f1=NULL,const char *f2=NULL);
   void closeFontxFile();
-  bool getGlyph (uint16_t ucode , const uint8_t **pGlyph,
+  bool getGlyph (uint32_t ucode , const uint8_t **pGlyph,
 		 uint8_t *pw, uint8_t *ph) override;
+  bool checkFontFile(bool verbose=false);
+  static void dumpFileSystem();
 
  protected:
   void addFont(const char *path);
