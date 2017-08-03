@@ -1,6 +1,5 @@
 #ifndef ESP32
 
-#include <FS.h>
 #include "FsFontx.h"
 
 FsFontx::FsFontx(const char *f0,const char *f1,const char *f2) : Fontx()
@@ -24,7 +23,7 @@ bool FsFontx::openFontxFile(FontxFile *ff)
 {
   if(!ff->opened){
     ff->opened = true;
-    File f = SPIFFS.open(ff->path,"r");
+    fs::File f = SPIFFS.open(ff->path,"r");
     if(!f){
       ff->valid = false;
       Serial.printf("FsFontx:%s not found.\n",ff->path);
@@ -78,7 +77,7 @@ bool FsFontx::getGlyph (uint32_t ucode , const uint8_t **pGlyph,
     
     if(ucode < 0x100){
       if(ff->is_ank){
-	ff->file.seek(17 + ucode * ff->fsz, SeekSet);
+	ff->file.seek(17 + ucode * ff->fsz, fs::SeekSet);
 	ff->file.readBytes((char *)m_glyphBuf, ff->fsz);
 	if(pGlyph) *pGlyph = m_glyphBuf;
 	if(pw) *pw = ff->w;
@@ -87,7 +86,7 @@ bool FsFontx::getGlyph (uint32_t ucode , const uint8_t **pGlyph,
       }
     }
     else {
-      if(!ff->file.seek(18, SeekSet)){
+      if(!ff->file.seek(18, fs::SeekSet)){
 	Serial.println("FsFontx::seek(18) failed.");
 	continue;
       }
@@ -102,7 +101,7 @@ bool FsFontx::getGlyph (uint32_t ucode , const uint8_t **pGlyph,
 	if(sjis >= buf[0] && sjis <= buf[1]) {
 	  nc += sjis - buf[0];
 	  uint32_t pos = 18 + ff->bc * 4 + nc * ff->fsz;
-	  if(!ff->file.seek(pos, SeekSet)){
+	  if(!ff->file.seek(pos, fs::SeekSet)){
 	    Serial.printf("FsFontx::seek(%u) failed.\n",pos);
 	    break;
 	  }
@@ -132,10 +131,10 @@ bool FsFontx::checkFontFile(bool verbose)
 
 void FsFontx::dumpFileSystem()
 {
-  Dir dir = SPIFFS.openDir("/");
+  fs::Dir dir = SPIFFS.openDir("/");
   int cnt = 0;
   while(dir.next()){
-    File f = dir.openFile("r");
+    fs::File f = dir.openFile("r");
     Serial.printf("[%d] %-12s %12u\n",++cnt,f.name(), f.size());
     f.close();
   }

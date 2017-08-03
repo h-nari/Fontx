@@ -2,6 +2,9 @@
 #define _fs_fontx_h_
 
 #include <Fontx.h>
+#ifndef FS_NO_GLOBALS
+#define FS_NO_GLOBALS
+#endif
 #include <FS.h>
 #include "uni2sjis.h"
 
@@ -17,7 +20,7 @@ struct FontxFile {
   uint8_t w,h;
   uint16_t fsz;
   uint8_t  bc;
-  File file;
+  fs::File file;
 };
 
 class FsFontx : public Fontx {
