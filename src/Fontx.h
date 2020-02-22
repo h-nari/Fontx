@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 
+#ifndef ESP32 /* ESP32 */
 #ifndef IMPORT_BIN
 #define IMPORT_BIN(file,sym) asm (					\
 				  ".section \".irom.text\"\n"		\
@@ -15,6 +16,8 @@
 				  ".balign 4\n"				\
 				  ".section \".text\"\n")
 #endif /* IMPORT_BIN */
+#endif /* ESP32 */
+
 #ifndef FontxFileMax
 #define FontxFileMax	3
 #endif
