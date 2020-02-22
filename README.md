@@ -90,7 +90,7 @@ FsFontxは、フォントのデータを<a href="https://github.com/esp8266/Ardu
 ## Fontx ファイルの入手方法
 
 このライブラリに同梱しているIPAフォントから作成されたフォントは
-下記サイトのものを使用させて井田抱きました。
+下記サイトのものを使用させて頂きました。
 
 * <a href="http://ayati.cocolog-nifty.com/blog/2012/08/ipalx322416-64a.html">IPAフォントを元としたLXで使える32/24/16ドットフォント: こばこのひみつ</a>
 
