@@ -1,8 +1,14 @@
 #include "Arduino.h"
 #include "uni2sjis.h"
 
-// const cnv_t uni2sjis_tbl[] PROGMEM = {
+/* Modify 2020/02/21 by M.Hagane
+ * added '#ifdef ESP32'
+ */
+#ifdef ESP32
+const cnv_t uni2sjis_tbl[] PROGMEM = {
+#else
 const cnv_t uni2sjis_tbl[] __attribute__((section(".irom.text")))={
+#endif
    {0x005c, 0x815f}, {0x00a2, 0x8191}, {0x00a3, 0x8192}, {0x00a7, 0x8198},
    {0x00a8, 0x814e}, {0x00ac, 0x81ca}, {0x00b0, 0x818b}, {0x00b1, 0x817d},
    {0x00b4, 0x814c}, {0x00b6, 0x81f7}, {0x00d7, 0x817e}, {0x00f7, 0x8180},
